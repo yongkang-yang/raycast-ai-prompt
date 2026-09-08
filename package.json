@@ -1,0 +1,102 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "prompt",
+  "title": "Prompt",
+  "description": "Translate, polish, shorten, explain, and reply to selected text using your own model.",
+  "icon": "extension-icon.png",
+  "author": "johan_yang",
+  "platforms": [
+    "Windows",
+    "macOS"
+  ],
+  "categories": [
+    "Productivity"
+  ],
+  "license": "MIT",
+  "commands": [
+    {
+      "name": "polish-selection",
+      "title": "Polish Selection",
+      "description": "Polish selected text while preserving its language and meaning",
+      "mode": "view"
+    },
+    {
+      "name": "friendly-reply",
+      "title": "Friendly Reply",
+      "description": "Write a concise and polite reply to selected text",
+      "mode": "view"
+    },
+    {
+      "name": "make-concise",
+      "title": "Make Concise",
+      "description": "Shorten selected text while preserving its meaning and language",
+      "mode": "view"
+    },
+    {
+      "name": "explain-selection",
+      "title": "Explain Selection",
+      "description": "Explain selected text in plain Chinese",
+      "mode": "view"
+    },
+    {
+      "name": "translate-selection",
+      "title": "Translate & Learn",
+      "description": "Learn with Chinese-English translations, examples, and optional contextual dialogues",
+      "mode": "view"
+    },
+    {
+      "name": "ocr-translate",
+      "title": "OCR Translate",
+      "description": "Select a screen region and translate its text using your vision model",
+      "mode": "no-view",
+      "platforms": [
+        "macOS"
+      ]
+    }
+  ],
+  "tools": [],
+  "dependencies": {
+    "@raycast/api": "^1.104.20",
+    "@raycast/utils": "^2.2.7"
+  },
+  "devDependencies": {
+    "@raycast/eslint-config": "^2.2.0",
+    "@types/node": "22.19.17",
+    "@types/react": "19.0.10",
+    "eslint": "^10.5.0",
+    "prettier": "^3.8.5",
+    "typescript": "^6.0.3"
+  },
+  "scripts": {
+    "build": "ray build",
+    "dev": "ray develop",
+    "fix-lint": "ray lint --fix",
+    "lint": "ray lint",
+    "prepublishOnly": "echo \"\\n\\nIt seems like you are trying to publish the Raycast extension to npm.\\n\\nIf you did intend to publish it to npm, remove the \\`prepublishOnly\\` script and rerun \\`npm publish\\` again.\\nIf you wanted to publish it to the Raycast Store instead, use \\`npm run publish\\` instead.\\n\\n\" && exit 1",
+    "publish": "npx @raycast/api@latest publish"
+  },
+  "preferences": [
+    {
+      "name": "apiKey",
+      "title": "API Key",
+      "description": "Your model provider API key",
+      "type": "password",
+      "required": true
+    },
+    {
+      "name": "baseUrl",
+      "title": "Base URL",
+      "description": "OpenAI-compatible API base URL",
+      "type": "textfield",
+      "required": true,
+      "default": "https://openrouter.ai/api/v1"
+    },
+    {
+      "name": "model",
+      "title": "Model",
+      "description": "Exact model ID from your provider",
+      "type": "textfield",
+      "required": true
+    }
+  ]
+}
