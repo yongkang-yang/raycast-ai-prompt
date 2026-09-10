@@ -27,12 +27,6 @@
       "mode": "view"
     },
     {
-      "name": "translate-selection",
-      "title": "Translate & Learn",
-      "description": "Learn with Chinese-English translations, examples, and optional contextual dialogues",
-      "mode": "view"
-    },
-    {
       "name": "ocr-translate",
       "title": "OCR Translate",
       "description": "Select a screen region and translate its text using your vision model",

@@ -30,13 +30,13 @@ export default async function Command() {
     await showHUD("Reading and translating image…");
     const result = await generate("translate", "", undefined, `data:image/png;base64,${image.toString("base64")}`);
     await launchCommand({
-      name: "translate-selection",
+      name: "selection-assistant",
       type: LaunchType.UserInitiated,
       context: { ocrResult: result },
     });
   } catch (error) {
     await launchCommand({
-      name: "translate-selection",
+      name: "selection-assistant",
       type: LaunchType.UserInitiated,
       context: { ocrError: error instanceof Error ? error.message : "Could not translate image" },
     });

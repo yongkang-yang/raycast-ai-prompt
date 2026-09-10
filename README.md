@@ -13,9 +13,13 @@ model, right inside Raycast.
   - Sentence or passage → runs **Polish** + **Translate**, with Polish listed first so its Paste action is the default (⏎) — meant for the common case of selecting a drafted paragraph, polishing it, and pasting the result back in place.
 
   Each section gets its own Paste/Copy actions (⌘K), so you're not stuck with the combined output.
+
+  Raycast reuses an already-open command's window instead of remounting it
+  on a repeat hotkey press, so pressing the hotkey again while the result
+  is still showing won't automatically re-read a new selection. Press
+  **⌘R** to force a fresh read without closing the window first.
 - **Friendly Reply** — write a concise, polite reply to selected text.
-- **Translate & Learn** — Chinese-English translation with examples and optional contextual dialogues, as a standalone command (also used internally as the result view for OCR Translate).
-- **OCR Translate** (macOS only) — select a screen region and translate its text using your vision model.
+- **OCR Translate** (macOS only) — select a screen region and translate its text using your vision model; displays its result in Selection Assistant.
 
 ## Setup
 

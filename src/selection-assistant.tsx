@@ -1,4 +1,13 @@
-import { Action, ActionPanel, Detail, getSelectedText, Icon, openExtensionPreferences } from "@raycast/api";
+import {
+  Action,
+  ActionPanel,
+  Detail,
+  getSelectedText,
+  Icon,
+  Keyboard,
+  LaunchProps,
+  openExtensionPreferences,
+} from "@raycast/api";
 import { useEffect, useState } from "react";
 import { classifySelection, generate, Task } from "./lib";
 
@@ -14,14 +23,36 @@ const SENTENCE_SECTIONS: Section[] = [
   { heading: "Polish", task: "polish" },
   { heading: "Translate", task: "translate" },
 ];
+// OCR Translate has no view of its own (it's a screen-capture command), so
+// it launches this command with the already-translated text to display.
+const OCR_SECTION: Section = { heading: "Translate", task: "translate" };
 
-export default function Command() {
+export default function Command({
+  launchContext,
+}: LaunchProps<{ launchContext?: { ocrResult?: string; ocrError?: string } }>) {
   const [sections, setSections] = useState<Section[]>();
   const [results, setResults] = useState<Record<string, { text?: string; error?: string }>>({});
   const [loadError, setLoadError] = useState<string>();
   const [loading, setLoading] = useState(true);
+  // Raycast reuses an already-open command's window instead of remounting
+  // it on a repeat hotkey press, so there's no automatic signal telling
+  // this component the selection may have changed. Bumping this lets ⌘R
+  // force a fresh read without needing to close the window first.
+  const [refreshCount, setRefreshCount] = useState(0);
 
   useEffect(() => {
+    if (launchContext?.ocrResult !== undefined || launchContext?.ocrError !== undefined) {
+      setSections([OCR_SECTION]);
+      setResults({
+        [OCR_SECTION.heading]:
+          launchContext.ocrResult !== undefined ? { text: launchContext.ocrResult } : { error: launchContext.ocrError },
+      });
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    setLoadError(undefined);
+    setResults({});
     const controller = new AbortController();
     async function load() {
       let text: string;
@@ -57,7 +88,7 @@ export default function Command() {
     }
     void load();
     return () => controller.abort();
-  }, []);
+  }, [refreshCount]);
 
   const markdown = loading
     ? "Processing selected text…"
@@ -73,7 +104,7 @@ export default function Command() {
 
   return (
     <Detail
-      navigationTitle="Selection Assistant"
+      navigationTitle={launchContext ? "OCR Translate" : "Selection Assistant"}
       isLoading={loading}
       markdown={markdown}
       actions={
@@ -88,6 +119,14 @@ export default function Command() {
               </ActionPanel.Section>
             );
           })}
+          {!launchContext && (
+            <Action
+              title="Refresh (Read Selection Again)"
+              icon={Icon.ArrowClockwise}
+              shortcut={Keyboard.Shortcut.Common.Refresh}
+              onAction={() => setRefreshCount((count) => count + 1)}
+            />
+          )}
           <Action title="Open Extension Preferences" icon={Icon.Gear} onAction={openExtensionPreferences} />
         </ActionPanel>
       }
