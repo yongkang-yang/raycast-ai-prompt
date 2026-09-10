@@ -1,18 +1,20 @@
 # Prompt
 
-Translate, polish, shorten, explain, and reply to selected text using
-your own model, right inside Raycast.
+Translate, explain, polish, and reply to selected text using your own
+model, right inside Raycast.
 
 > **Not published to the Raycast Store yet.** Install it locally — see
 > [Installation](#installation) below.
 
 ## Commands
 
-- **Polish Selection** — polish selected text while preserving its language and meaning.
+- **Selection Assistant** — the main entry point; bind this one to a hotkey (e.g. `⌥D`). Reads the current selection and auto-detects whether it's a word/phrase or a sentence/passage:
+  - Word or phrase → runs **Translate & Learn** (vocabulary mode: 中英对照, example sentences) + **Explain**.
+  - Sentence or passage → runs **Polish** + **Translate**, with Polish listed first so its Paste action is the default (⏎) — meant for the common case of selecting a drafted paragraph, polishing it, and pasting the result back in place.
+
+  Each section gets its own Paste/Copy actions (⌘K), so you're not stuck with the combined output.
 - **Friendly Reply** — write a concise, polite reply to selected text.
-- **Make Concise** — shorten selected text while preserving its meaning and language.
-- **Explain Selection** — explain selected text in plain Chinese.
-- **Translate & Learn** — Chinese-English translation with examples and optional contextual dialogues.
+- **Translate & Learn** — Chinese-English translation with examples and optional contextual dialogues, as a standalone command (also used internally as the result view for OCR Translate).
 - **OCR Translate** (macOS only) — select a screen region and translate its text using your vision model.
 
 ## Setup
@@ -25,6 +27,11 @@ In extension preferences, set:
 
 Any OpenAI-compatible endpoint works, so you can point this at OpenRouter,
 OpenAI directly, or a self-hosted gateway.
+
+**Polish** is tuned toward native, idiomatic phrasing rather than just
+grammar correctness — it targets fixing translated-sounding or stilted
+wording (the common case being polishing a drafted email) while keeping
+your meaning, tone, and facts unchanged.
 
 ## Installation
 

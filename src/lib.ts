@@ -21,17 +21,30 @@ Include this section only when a concrete situation helps explain usage. Write a
 Keep vocabulary learning material brief (at most 180 English words, excluding Chinese counterparts).
 
 In both modes, preserve meaning, tone, uncertainty, names, and numbers. Translate the entire selection faithfully without summarizing or inventing facts. Return only the output required by the selected mode.`,
-  concise:
-    "Make the following text concise. Remove redundancy while preserving its key information, meaning, and original language. Return only the revised text.",
   explain:
     "Explain the following text in plain Chinese. Start with its main point, then clarify essential terms. Use a brief example if helpful. Clearly distinguish the text’s claims from your interpretation.",
   polish:
-    "Polish the following text in its original language. Improve grammar, clarity, and naturalness while preserving meaning, tone, facts, and paragraph structure. Return only the polished text.",
+    "Polish the following text in its original language so it reads the way a native, professional speaker would naturally write it — not a technically-correct but stilted or translated-sounding version. Fix awkward literal phrasing, non-native collocations, and clunky connectors; choose the wording and sentence rhythm a native writer would actually use. If the text reads like an email or message, keep it in a natural professional register — polished, not stiff or overly formal. Preserve the author's meaning, tone, intent, facts, and paragraph structure exactly; do not add, remove, soften, or strengthen anything. Return only the polished text.",
   reply:
     "Write a friendly reply to the following text in the same language. Be concise and polite. Do not invent personal facts, promises, or commitments. Return only the reply.",
 };
 
 export type Task = keyof typeof prompts;
+
+// Rough client-side echo of the word-vs-sentence split the "translate"
+// prompt already makes internally (see its SENTENCE MODE / VOCABULARY MODE
+// split above), used here to decide which second task to pair translate
+// with. A short, punctuation-free, single-line selection reads as a word,
+// phrase, or idiom; anything longer, multi-line, or ending in sentence
+// punctuation reads as a sentence or passage.
+export function classifySelection(text: string): "word" | "sentence" {
+  const trimmed = text.trim();
+  const wordCount = trimmed.split(/\s+/).filter(Boolean).length;
+  const endsWithSentencePunctuation = /[.!?。!?]\s*$/.test(trimmed);
+  const isMultiline = /\n/.test(trimmed);
+  if (wordCount <= 4 && trimmed.length <= 40 && !endsWithSentencePunctuation && !isMultiline) return "word";
+  return "sentence";
+}
 
 export async function generate(task: Task, text: string, signal?: AbortSignal, imageDataUrl?: string) {
   const preferences = getPreferenceValues<{ apiKey: string; baseUrl: string; model: string }>();
