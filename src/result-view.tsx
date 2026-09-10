@@ -2,23 +2,21 @@ import { Action, ActionPanel, Detail, getSelectedText, Icon, openExtensionPrefer
 import { useEffect, useState } from "react";
 import { generate, Task } from "./lib";
 
-export function ResultView({
-  task,
-  title,
-  initialResult,
-  initialError,
-}: {
-  task: Task;
-  title: string;
-  initialResult?: string;
-  initialError?: string;
-}) {
-  const [result, setResult] = useState(initialResult ?? "");
-  const [error, setError] = useState(initialError ?? "");
-  const [loading, setLoading] = useState(initialResult === undefined && initialError === undefined);
+export function ResultView({ task, title }: { task: Task; title: string }) {
+  const [result, setResult] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+  // Raycast reuses an already-open command's window instead of remounting
+  // it on a repeat hotkey press, so there's no automatic signal telling
+  // this component the selection may have changed. Enter is pinned to
+  // Refresh below rather than Paste, since there's no reliable way to tell
+  // whether a result already on screen is still current.
+  const [refreshCount, setRefreshCount] = useState(0);
 
   useEffect(() => {
-    if (initialResult !== undefined || initialError !== undefined) return;
+    setLoading(true);
+    setError("");
+    setResult("");
     const controller = new AbortController();
     async function load() {
       try {
@@ -42,7 +40,7 @@ export function ResultView({
     }
     void load();
     return () => controller.abort();
-  }, [task, initialResult, initialError]);
+  }, [task, refreshCount]);
 
   return (
     <Detail
@@ -51,8 +49,22 @@ export function ResultView({
       markdown={loading ? "Processing selected text…" : error ? `## Could not process text\n\n${error}` : result}
       actions={
         <ActionPanel>
+          <Action
+            title="Refresh (Read Selection Again)"
+            icon={Icon.ArrowClockwise}
+            onAction={() => setRefreshCount((count) => count + 1)}
+          />
+          {result && (
+            <Action.Paste
+              title="Paste Result"
+              content={result}
+              shortcut={{
+                macOS: { modifiers: ["cmd"], key: "return" },
+                Windows: { modifiers: ["ctrl"], key: "return" },
+              }}
+            />
+          )}
           {result && <Action.CopyToClipboard title="Copy Result" content={result} />}
-          {result && <Action.Paste title="Paste Result" content={result} />}
           <Action title="Open Extension Preferences" icon={Icon.Gear} onAction={openExtensionPreferences} />
         </ActionPanel>
       }

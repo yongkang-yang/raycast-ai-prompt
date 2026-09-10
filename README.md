@@ -14,15 +14,17 @@ model, right inside Raycast.
 
   Each section gets its own Paste/Copy actions (⌘K), so you're not stuck with the combined output.
 
-  Raycast reuses an already-open command's window instead of remounting it
-  on a repeat hotkey press, so pressing the hotkey again while a result is
-  still showing won't automatically re-read the new selection. **⏎ (Enter)
-  always re-reads the current selection and reruns** rather than pasting —
-  there's no reliable way to tell whether what's on screen is still
-  current, so Enter never risks pasting a stale result. Once fresh results
-  are showing, **⌘⏎ pastes the primary section** (Polish for a sentence,
-  Translate & Learn for a word).
 - **Friendly Reply** — write a concise, polite reply to selected text.
+
+Raycast reuses an already-open command's window instead of remounting it
+on a repeat hotkey press, so pressing the hotkey again while a result is
+still showing won't automatically re-read the new selection. Selection
+Assistant and Friendly Reply both pin **⏎ (Enter) to always re-read the
+current selection and rerun**, rather than pasting — there's no reliable
+way to tell whether what's on screen is still current, so Enter never
+risks pasting a stale result. Once fresh results are showing, **⌘⏎
+pastes** (Selection Assistant's primary section — Polish for a sentence,
+Translate & Learn for a word — or Friendly Reply's reply).
 - **OCR Translate** (macOS only) — select a screen region and translate its text using your vision model; displays its result in Selection Assistant.
 
 ## Setup

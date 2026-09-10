@@ -130,7 +130,14 @@ export default function Command({
                 <Action.Paste
                   title={`Paste ${section.heading}`}
                   content={text}
-                  shortcut={!launchContext && index === 0 ? { modifiers: ["cmd"], key: "return" } : undefined}
+                  shortcut={
+                    !launchContext && index === 0
+                      ? {
+                          macOS: { modifiers: ["cmd"], key: "return" },
+                          Windows: { modifiers: ["ctrl"], key: "return" },
+                        }
+                      : undefined
+                  }
                 />
                 <Action.CopyToClipboard title={`Copy ${section.heading}`} content={text} />
               </ActionPanel.Section>
