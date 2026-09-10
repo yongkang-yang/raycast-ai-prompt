@@ -4,7 +4,6 @@ import {
   Detail,
   getSelectedText,
   Icon,
-  Keyboard,
   LaunchProps,
   openExtensionPreferences,
 } from "@raycast/api";
@@ -88,7 +87,7 @@ export default function Command({
     }
     void load();
     return () => controller.abort();
-  }, [refreshCount]);
+  }, [refreshCount, launchContext?.ocrResult, launchContext?.ocrError]);
 
   const markdown = loading
     ? "Processing selected text…"
@@ -109,24 +108,34 @@ export default function Command({
       markdown={markdown}
       actions={
         <ActionPanel>
-          {sections?.map((section) => {
-            const text = results[section.heading]?.text;
-            if (!text) return null;
-            return (
-              <ActionPanel.Section key={section.heading} title={section.heading}>
-                <Action.Paste title={`Paste ${section.heading}`} content={text} />
-                <Action.CopyToClipboard title={`Copy ${section.heading}`} content={text} />
-              </ActionPanel.Section>
-            );
-          })}
+          {/* Enter always means "refresh against the current selection" — never
+              a stale Paste — because Raycast reuses an already-open command's
+              window on a repeat hotkey press instead of remounting it, and
+              there's no reliable way to tell whether what's on screen is
+              still current. Paste is pinned to ⌘↵ instead of relying on
+              positional secondary-action assignment, so it stays put
+              regardless of how many sections are showing. */}
           {!launchContext && (
             <Action
               title="Refresh (Read Selection Again)"
               icon={Icon.ArrowClockwise}
-              shortcut={Keyboard.Shortcut.Common.Refresh}
               onAction={() => setRefreshCount((count) => count + 1)}
             />
           )}
+          {sections?.map((section, index) => {
+            const text = results[section.heading]?.text;
+            if (!text) return null;
+            return (
+              <ActionPanel.Section key={section.heading} title={section.heading}>
+                <Action.Paste
+                  title={`Paste ${section.heading}`}
+                  content={text}
+                  shortcut={!launchContext && index === 0 ? { modifiers: ["cmd"], key: "return" } : undefined}
+                />
+                <Action.CopyToClipboard title={`Copy ${section.heading}`} content={text} />
+              </ActionPanel.Section>
+            );
+          })}
           <Action title="Open Extension Preferences" icon={Icon.Gear} onAction={openExtensionPreferences} />
         </ActionPanel>
       }
